@@ -25,7 +25,7 @@ export async function GET(
     // Return recipes as JSON response
     return NextResponse.json(recipes);
 
-  } catch (error) {
+  } catch {
 
     // Return error response if request fails
     return NextResponse.json(
