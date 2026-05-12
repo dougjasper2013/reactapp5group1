@@ -6,3 +6,9 @@
   font-size: 0.875rem;
   width: 100%;
 }
+
+.members {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
