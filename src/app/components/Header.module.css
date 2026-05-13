@@ -17,9 +17,10 @@
   gap: 0.75rem;
 }
 
-.logoIcon {
-  font-size: 2rem;
-  line-height: 1;
+.logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .title {

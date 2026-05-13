@@ -1,14 +1,18 @@
 import styles from "./Header.module.css";
+import Image from "next/image";
 
 export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
-        <span className={styles.logoIcon}>🍽️</span>
-        <div>
-          <span className={styles.title}>PlatePal</span>
-          <span className={styles.tagline}>Find your next favourite recipe.</span>
-        </div>
+        <Image
+          src="/logo/PlatePal_logo.png"
+          alt="PlatePal logo"
+          width={140}
+          height={50}
+          className={styles.logo}
+          priority
+        />
       </div>
       <nav className={styles.nav}>
         <a href="#home" className={styles.navLink}>Home</a>
