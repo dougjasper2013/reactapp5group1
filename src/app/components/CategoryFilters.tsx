@@ -1,27 +1,29 @@
-import styles from "./CategoryFilters.module.css";
+'use client';
 
-// All possible category options including "All"
-const CATEGORIES = [
-  "All",
-  "Breakfast",
-  "Lunch",
-  "Dinner",
-  "Dessert",
-  "Vegetarian",
-  "Quick Meals",
-];
+interface CategoryFiltersProps {
+  activeCategory: string;
+  onCategorySelect: (category: string) => void;
+}
 
-// UI-only component — active state and selection logic to be wired up by the frontend developer
-export default function CategoryFilters() {
+export default function CategoryFilters({ 
+  activeCategory, 
+  onCategorySelect 
+}: CategoryFiltersProps) {
+
+  const categories = [
+    "All", "Breakfast", "Lunch", "Dinner", "Dessert", "Vegetarian", "Quick Meals"
+  ];
+
   return (
-    <section className={styles.section}>
-      <h2 className={styles.title}>Browse by Category</h2>
-      <div className={styles.filters}>
-        {CATEGORIES.map((cat, index) => (
-          <button
-            key={cat}
-            // First button shown as active for visual reference only
-            className={`${styles.button} ${index === 0 ? styles.active : ""}`}
+    <section className="category-section">
+      <h3 className="category-title">Browse by Category</h3>
+
+      <div className="category-buttons">
+        {categories.map((cat) => (
+          <button 
+            key={cat} 
+            className={`category-btn ${activeCategory === cat ? 'active' : ''}`}
+            onClick={() => onCategorySelect(cat)}
           >
             {cat}
           </button>

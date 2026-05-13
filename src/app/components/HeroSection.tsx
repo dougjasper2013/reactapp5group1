@@ -1,16 +1,14 @@
-import styles from "./HeroSection.module.css";
+'use client';
 
 export default function HeroSection() {
   return (
-    <section id="home" className={styles.hero}>
-      <div className={styles.content}>
-        <h1 className={styles.title}>Discover Recipes in a Dash</h1>
-        <p className={styles.subtitle}>
+    <section className="hero">
+      <div className="hero-content">
+        <h1 className="hero-title">Discover Recipes in a Dash</h1>
+        <p className="hero-subtitle">
           Search, filter, and save delicious recipes all in one simple app.
         </p>
-        <a href="#recipes" className={styles.cta}>
-          Start Exploring
-        </a>
+        <button className="cta">Start Exploring</button>
       </div>
     </section>
   );
