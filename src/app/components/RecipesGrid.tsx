@@ -12,71 +12,22 @@ interface Recipe {
 }
 
 interface RecipesGridProps {
+  recipes: Recipe[];
   searchTerm?: string;
   activeCategory?: string;
   favorites?: number[];
   onToggleFavorite?: (id: number) => void;
 }
 
-const mockRecipes: Recipe[] = [
-  {
-    id: 1,
-    title: "Creamy Pasta",
-    name: "Creamy Pasta",
-    category: "DINNER",
-    description: "A quick and tasty pasta dish perfect for busy nights.",
-    color: "#f97316",
-  },
-  {
-    id: 2,
-    title: "Avocado Toast",
-    name: "Avocado Toast",
-    category: "BREAKFAST",
-    description: "Simple, nutritious, and delicious morning toast with fresh avocado.",
-    color: "#22c55e",
-  },
-  {
-    id: 3,
-    title: "Greek Salad",
-    name: "Greek Salad",
-    category: "LUNCH",
-    description: "Fresh veggies, olives, and feta cheese in a light olive oil dressing.",
-    color: "#3b82f6",
-  },
-  {
-    id: 4,
-    title: "Lava Cake",
-    name: "Chocolate Lava Cake",
-    category: "DESSERT",
-    description: "Warm, gooey chocolate cake with a melted center. A true treat.",
-    color: "#78716c",
-  },
-  {
-    id: 5,
-    title: "Stir Fry",
-    name: "Veggie Stir Fry",
-    category: "VEGETARIAN",
-    description: "Colorful vegetables tossed in a savory soy-ginger sauce.",
-    color: "#22c55e",
-  },
-  {
-    id: 6,
-    title: "Egg Fried Rice",
-    name: "Egg Fried Rice",
-    category: "QUICK MEALS",
-    description: "A 15-minute weeknight saviour. Simple ingredients, big flavour.",
-    color: "#eab308",
-  },
-];
-
 export default function RecipesGrid({ 
+  recipes,
   searchTerm = "", 
   activeCategory = "All",
   favorites = [],
   onToggleFavorite 
 }: RecipesGridProps) {
 
-  const filteredRecipes = mockRecipes.filter((recipe) => {
+  const filteredRecipes = recipes.filter((recipe) => {
     const matchesSearch = 
       recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       recipe.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -89,7 +40,7 @@ export default function RecipesGrid({
   });
 
   return (
-    <section id="recipes" className="recipes-section">
+    <section className="recipes-section">
       <div className="recipes-container">
         <h2 className="recipes-title">Featured Recipes</h2>
         

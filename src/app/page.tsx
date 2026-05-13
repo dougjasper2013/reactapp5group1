@@ -10,8 +10,26 @@ import FavoritesSection from "./components/FavoritesSection";
 import AboutSection from "./components/AboutSection";
 import Footer from "./components/Footer";
 
+interface Recipe {
+  id: number;
+  title: string;
+  name: string;
+  category: string;
+  description: string;
+  color?: string;
+}
+
+interface MealDBRecipe {
+  idMeal: string;
+  strMeal: string;
+  strCategory: string;
+  strInstructions: string;
+}
+
 export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [recipes, setRecipes] =
+  useState<Recipe[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [favorites, setFavorites] = useState<number[]>(() => {
     if (typeof window !== 'undefined') {
@@ -22,16 +40,90 @@ export default function Page() {
   });
 
   useEffect(() => {
-    localStorage.setItem('platepal-favorites', JSON.stringify(favorites));
-  }, [favorites]);
 
-  const toggleFavorite = (id: number) => {
-    setFavorites(prev => 
-      prev.includes(id) 
-        ? prev.filter(favId => favId !== id) 
-        : [...prev, id]
-    );
-  };
+  async function fetchRecipe() {
+    try {
+      const response =
+        await fetch("/api/recipes?search=chicken");
+      const data =
+        await response.json();
+
+      const formattedRecipes =
+  data.map(
+    (
+  meal: MealDBRecipe,
+  index: number
+)=> {
+
+      const colors = [
+        "#f97316",
+        "#22c55e",
+        "#3b82f6",
+        "#eab308",
+        "#78716c",
+        "#ef4444",
+      ];
+
+      return {
+        id: Number(
+          meal.idMeal
+        ),
+
+        title:
+          meal.strMeal,
+
+        name:
+          meal.strMeal,
+
+        category:
+          meal.strCategory
+            ?.toUpperCase() ||
+          "RECIPE",
+
+        description:
+          meal.strInstructions
+            ?.slice(0, 120) +
+          "...",
+
+        color:
+          colors[
+            index %
+              colors.length
+          ],
+      };
+    }
+  );
+
+setRecipes(
+  formattedRecipes
+);
+
+    } catch (error) {
+
+      console.error(
+        "Error fetching recipe:",
+        error
+      );
+    }
+  }
+
+  fetchRecipe();
+
+}, []);
+const toggleFavorite = (
+  id: number
+) => {
+
+  setFavorites((prev) =>
+
+    prev.includes(id)
+      ? prev.filter(
+          (favId) =>
+            favId !== id
+        )
+      : [...prev, id]
+  );
+};
 
   return (
     <>
@@ -49,6 +141,7 @@ export default function Page() {
       />
 
       <RecipesGrid 
+        recipes={recipes}
         searchTerm={searchTerm}
         activeCategory={activeCategory}
         favorites={favorites}
@@ -57,7 +150,7 @@ export default function Page() {
 
       <FavoritesSection 
         favorites={favorites}
-        allRecipes={mockRecipes}  
+        allRecipes={recipes}
         onToggleFavorite={toggleFavorite}
       />
 
@@ -66,55 +159,3 @@ export default function Page() {
     </>
   );
 }
-
-// ==================== MOCK DATA ====================
-const mockRecipes = [
-  {
-    id: 1,
-    title: "Creamy Pasta",
-    name: "Creamy Pasta",
-    category: "DINNER",
-    description: "A quick and tasty pasta dish perfect for busy nights.",
-    color: "#f97316",
-  },
-  {
-    id: 2,
-    title: "Avocado Toast",
-    name: "Avocado Toast",
-    category: "BREAKFAST",
-    description: "Simple, nutritious, and delicious morning toast with fresh avocado.",
-    color: "#22c55e",
-  },
-  {
-    id: 3,
-    title: "Greek Salad",
-    name: "Greek Salad",
-    category: "LUNCH",
-    description: "Fresh veggies, olives, and feta cheese in a light olive oil dressing.",
-    color: "#3b82f6",
-  },
-  {
-    id: 4,
-    title: "Lava Cake",
-    name: "Chocolate Lava Cake",
-    category: "DESSERT",
-    description: "Warm, gooey chocolate cake with a melted center. A true treat.",
-    color: "#78716c",
-  },
-  {
-    id: 5,
-    title: "Stir Fry",
-    name: "Veggie Stir Fry",
-    category: "VEGETARIAN",
-    description: "Colorful vegetables tossed in a savory soy-ginger sauce.",
-    color: "#22c55e",
-  },
-  {
-    id: 6,
-    title: "Egg Fried Rice",
-    name: "Egg Fried Rice",
-    category: "QUICK MEALS",
-    description: "A 15-minute weeknight saviour. Simple ingredients, big flavour.",
-    color: "#eab308",
-  },
-];
