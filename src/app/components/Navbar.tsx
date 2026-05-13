@@ -1,9 +1,19 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   return (
     <nav className="navbar">
-      <div className="logo">PlatePal</div>
+      <div className="logo">
+        <Image
+          src="/logo/PlatePal_logo.png"
+          alt="PlatePal"
+          width={130}
+          height={46}
+          priority
+          style={{ objectFit: "contain" }}
+        />
+      </div>
 
       <ul className="nav-links">
         <li>
