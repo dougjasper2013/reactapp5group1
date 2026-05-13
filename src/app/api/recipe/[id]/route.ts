@@ -8,16 +8,16 @@ const BASE_URL =
 export async function GET(
   _request: Request,
   context: {
-    params: {
+    params: Promise<{
       id: string;
-    };
+    }>;
   }
 ) {
 
   try {
 
     // Get recipe ID from route params
-    const { id } = context.params;
+    const { id } = await context.params;
 
     // Fetch recipe details by ID
     const response = await fetch(

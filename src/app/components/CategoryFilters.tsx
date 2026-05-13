@@ -1,8 +1,14 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 interface CategoryFiltersProps {
   activeCategory: string;
   onCategorySelect: (category: string) => void;
+}
+
+interface MealDBCategory {
+  strCategory: string;
 }
 
 export default function CategoryFilters({ 
@@ -10,9 +16,22 @@ export default function CategoryFilters({
   onCategorySelect 
 }: CategoryFiltersProps) {
 
-  const categories = [
-    "All", "Breakfast", "Lunch", "Dinner", "Dessert", "Vegetarian", "Quick Meals"
-  ];
+  const [categories, setCategories] = useState<string[]>(["All"]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await fetch("/api/categories");
+        const data: MealDBCategory[] = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setCategories(["All", ...data.map(c => c.strCategory)]);
+        }
+      } catch {
+        // Keep default "All" if fetch fails
+      }
+    }
+    fetchCategories();
+  }, []);
 
   return (
     <section className="category-section">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import SearchSection from "./components/SearchSection";
@@ -26,10 +26,23 @@ interface MealDBRecipe {
   strInstructions: string;
 }
 
+const COLORS = ["#f97316", "#22c55e", "#3b82f6", "#eab308", "#78716c", "#ef4444"];
+
+function formatRecipes(meals: MealDBRecipe[]): Recipe[] {
+  return meals.map((meal, index) => ({
+    id: Number(meal.idMeal),
+    title: meal.strMeal,
+    name: meal.strMeal,
+    category: meal.strCategory?.toUpperCase() || "RECIPE",
+    description: (meal.strInstructions?.slice(0, 120) ?? "") + "...",
+    color: COLORS[index % COLORS.length],
+  }));
+}
+
 export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [recipes, setRecipes] =
-  useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [favorites, setFavorites] = useState<number[]>(() => {
     if (typeof window !== 'undefined') {
@@ -39,116 +52,69 @@ export default function Page() {
     return [];
   });
 
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Save favorites to localStorage whenever they change
   useEffect(() => {
+    localStorage.setItem('platepal-favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
-  async function fetchRecipe() {
-    try {
-      const response =
-        await fetch("/api/recipes?search=chicken");
-      const data =
-        await response.json();
+  // Fetch recipes — on load fetch popular, then debounce user search
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
 
-      const formattedRecipes =
-  data.map(
-    (
-  meal: MealDBRecipe,
-  index: number
-)=> {
+    const delay = searchTerm.trim() === "" ? 0 : 500;
 
-      const colors = [
-        "#f97316",
-        "#22c55e",
-        "#3b82f6",
-        "#eab308",
-        "#78716c",
-        "#ef4444",
-      ];
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        // Use "a" as default to get a broad variety when no search term
+        const query = searchTerm.trim() === "" ? "a" : searchTerm.trim();
+        const response = await fetch(`/api/recipes?search=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        setRecipes(Array.isArray(data) && data.length > 0 ? formatRecipes(data) : []);
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+        setRecipes([]);
+      } finally {
+        setLoading(false);
+      }
+    }, delay);
 
-      return {
-        id: Number(
-          meal.idMeal
-        ),
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [searchTerm]);
 
-        title:
-          meal.strMeal,
-
-        name:
-          meal.strMeal,
-
-        category:
-          meal.strCategory
-            ?.toUpperCase() ||
-          "RECIPE",
-
-        description:
-          meal.strInstructions
-            ?.slice(0, 120) +
-          "...",
-
-        color:
-          colors[
-            index %
-              colors.length
-          ],
-      };
-    }
-  );
-
-setRecipes(
-  formattedRecipes
-);
-
-    } catch (error) {
-
-      console.error(
-        "Error fetching recipe:",
-        error
-      );
-    }
-  }
-
-  fetchRecipe();
-
-}, []);
-const toggleFavorite = (
-  id: number
-) => {
-
-  setFavorites((prev) =>
-
-    prev.includes(id)
-      ? prev.filter(
-          (favId) =>
-            favId !== id
-        )
-      : [...prev, id]
-  );
-};
+  const toggleFavorite = (id: number) => {
+    setFavorites(prev =>
+      prev.includes(id) ? prev.filter(favId => favId !== id) : [...prev, id]
+    );
+  };
 
   return (
     <>
       <Navbar />
       <HeroSection />
 
-      <SearchSection 
+      <SearchSection
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
       />
 
-      <CategoryFilters 
+      <CategoryFilters
         activeCategory={activeCategory}
         onCategorySelect={setActiveCategory}
       />
 
-      <RecipesGrid 
+      <RecipesGrid
         recipes={recipes}
+        loading={loading}
         searchTerm={searchTerm}
         activeCategory={activeCategory}
         favorites={favorites}
         onToggleFavorite={toggleFavorite}
       />
 
-      <FavoritesSection 
+      <FavoritesSection
         favorites={favorites}
         allRecipes={recipes}
         onToggleFavorite={toggleFavorite}

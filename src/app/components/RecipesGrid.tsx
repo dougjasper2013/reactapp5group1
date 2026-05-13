@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 interface Recipe {
   id: number;
   title: string;
@@ -13,6 +11,7 @@ interface Recipe {
 
 interface RecipesGridProps {
   recipes: Recipe[];
+  loading?: boolean;
   searchTerm?: string;
   activeCategory?: string;
   favorites?: number[];
@@ -21,6 +20,7 @@ interface RecipesGridProps {
 
 export default function RecipesGrid({ 
   recipes,
+  loading = false,
   searchTerm = "", 
   activeCategory = "All",
   favorites = [],
@@ -40,47 +40,51 @@ export default function RecipesGrid({
   });
 
   return (
-    <section className="recipes-section">
+    <section id="recipes" className="recipes-section">
       <div className="recipes-container">
         <h2 className="recipes-title">Featured Recipes</h2>
         
-        <div className="recipes-grid">
-          {filteredRecipes.length > 0 ? (
-            filteredRecipes.map((recipe) => {
-              const isFavorite = favorites.includes(recipe.id);
-              
-              return (
-                <div key={recipe.id} className="recipe-card">
-                  <div 
-                    className="recipe-banner"
-                    style={{ backgroundColor: recipe.color }}
-                  >
-                    <h3 className="recipe-banner-title">{recipe.title}</h3>
-                    
-                    <button 
-                      className="favorite-btn"
-                      onClick={() => onToggleFavorite?.(recipe.id)}
+        {loading ? (
+          <p className="recipes-loading">Loading recipes...</p>
+        ) : (
+          <div className="recipes-grid">
+            {filteredRecipes.length > 0 ? (
+              filteredRecipes.map((recipe) => {
+                const isFavorite = favorites.includes(recipe.id);
+                
+                return (
+                  <div key={recipe.id} className="recipe-card">
+                    <div 
+                      className="recipe-banner"
+                      style={{ backgroundColor: recipe.color }}
                     >
-                      {isFavorite ? '❤️' : '♡'}
-                    </button>
-                  </div>
+                      <h3 className="recipe-banner-title">{recipe.title}</h3>
+                      
+                      <button 
+                        className="favorite-btn"
+                        onClick={() => onToggleFavorite?.(recipe.id)}
+                      >
+                        {isFavorite ? '❤️' : '♡'}
+                      </button>
+                    </div>
 
-                  <div className="recipe-content">
-                    <span className="recipe-category">{recipe.category}</span>
-                    <h4 className="recipe-name">{recipe.name}</h4>
-                    <p className="recipe-description">{recipe.description}</p>
-                    
-                    <button className="view-recipe-btn">View Recipe</button>
+                    <div className="recipe-content">
+                      <span className="recipe-category">{recipe.category}</span>
+                      <h4 className="recipe-name">{recipe.name}</h4>
+                      <p className="recipe-description">{recipe.description}</p>
+                      
+                      <button className="view-recipe-btn">View Recipe</button>
+                    </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <p className="no-results text-center py-10 text-gray-500">
-              No recipes found matching your criteria.
-            </p>
-          )}
-        </div>
+                );
+              })
+            ) : (
+              <p className="no-results">
+                No recipes found. Try a different search or category.
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

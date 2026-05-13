@@ -192,6 +192,20 @@ body {
   color: #1f2937;
 }
 
+.recipes-loading {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #f97316;
+  padding: 60px 0;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px 0;
+  color: #6b7280;
+  font-size: 1.05rem;
+}
+
 .recipes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
