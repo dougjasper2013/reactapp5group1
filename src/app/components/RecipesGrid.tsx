@@ -89,7 +89,7 @@ export default function RecipesGrid({
   });
 
   return (
-    <section className="recipes-section">
+    <section id="recipes" className="recipes-section">
       <div className="recipes-container">
         <h2 className="recipes-title">Featured Recipes</h2>
         

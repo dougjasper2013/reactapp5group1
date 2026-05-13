@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import SearchSection from "./components/SearchSection";
@@ -8,11 +8,22 @@ import CategoryFilters from "./components/CategoryFilters";
 import RecipesGrid from "./components/RecipesGrid";
 import FavoritesSection from "./components/FavoritesSection";
 import AboutSection from "./components/AboutSection";
+import Footer from "./components/Footer";
 
 export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<number[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('platepal-favorites');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('platepal-favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
   const toggleFavorite = (id: number) => {
     setFavorites(prev => 
@@ -51,7 +62,7 @@ export default function Page() {
       />
 
       <AboutSection />
-      
+      <Footer />
     </>
   );
 }

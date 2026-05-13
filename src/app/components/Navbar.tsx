@@ -17,16 +17,16 @@ export default function Navbar() {
 
       <ul className="nav-links">
         <li>
-          <Link href="/">Home</Link>
+          <Link href="/#home">Home</Link>
         </li>
         <li>
-          <Link href="/recipes">Recipes</Link>
+          <Link href="/#recipes">Recipes</Link>
         </li>
         <li>
-          <Link href="/favourites">Favourites</Link>
+          <Link href="/#favorites">Favourites</Link>
         </li>
         <li>
-          <Link href="/about">About</Link>
+          <Link href="/#about">About</Link>
         </li>
       </ul>
     </nav>

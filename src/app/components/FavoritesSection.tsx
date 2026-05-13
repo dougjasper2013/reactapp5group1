@@ -24,7 +24,7 @@ export default function FavoritesSection({
   const favoriteRecipes = allRecipes.filter(recipe => favorites.includes(recipe.id));
 
   return (
-    <section className="favorites-section">
+    <section id="favorites" className="favorites-section">
       <h2 className="favorites-title">Your Favourite Recipes</h2>
 
       {favoriteRecipes.length === 0 ? (
